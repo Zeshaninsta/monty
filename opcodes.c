@@ -3,25 +3,21 @@
 #include <stdlib.h>
 
 /**
- * push - Pushes an element onto the stack.
+ * f_push - Pushes an element onto the stack.
  * @stack: Pointer to the top of the stack
  * @line_number: Line number in the Monty byte code file
- * @arg: Argument to be pushed onto the stack
  */
-void push(stack_t **stack, unsigned int line_number, char *arg)
+void f_push(stack_t **stack, unsigned int line_number)
 {
-	int value;
-	stack_t *new_node;
-
-    if (!stack || !arg)
+    if (!bus.arg)
     {
         fprintf(stderr, "L%u: usage: push integer\n", line_number);
         exit(EXIT_FAILURE);
     }
 
-    value = atoi(arg);
+    int value = atoi(bus.arg);
+    stack_t *new_node = malloc(sizeof(stack_t));
 
-    new_node = malloc(sizeof(stack_t));
     if (new_node == NULL)
     {
         fprintf(stderr, "Error: malloc failed\n");
@@ -41,29 +37,31 @@ void push(stack_t **stack, unsigned int line_number, char *arg)
 }
 
 /**
- * pall - Prints all values on the stack.
+ * f_pall - Prints all values on the stack.
  * @stack: Pointer to the top of the stack
  * @line_number: Line number in the Monty byte code file
  */
-void pall(stack_t **stack, unsigned int line_number)
+void f_pall(stack_t **stack, unsigned int line_number)
 {
-    stack_t *current;
-    (void)line_number;
+    stack_t *current = *stack;
 
-    current = *stack;
     while (current != NULL)
     {
         printf("%d\n", current->n);
         current = current->next;
     }
+
+    (void)line_number; // Unused parameter
 }
 
+// Implement other opcode functions (pint, pop, swap, add, nop) here...
+
 /**
- * pint - Prints the value at the top of the stack.
+ * f_pint - Prints the value at the top of the stack.
  * @stack: Pointer to the top of the stack
  * @line_number: Line number in the Monty byte code file
  */
-void pint(stack_t **stack, unsigned int line_number)
+void f_pint(stack_t **stack, unsigned int line_number)
 {
     if (*stack == NULL)
     {
@@ -75,11 +73,11 @@ void pint(stack_t **stack, unsigned int line_number)
 }
 
 /**
- * pop - Removes the top element from the stack.
+ * f_pop - Removes the top element from the stack.
  * @stack: Pointer to the top of the stack
  * @line_number: Line number in the Monty byte code file
  */
-void pop(stack_t **stack, unsigned int line_number)
+void f_pop(stack_t **stack, unsigned int line_number)
 {
     if (*stack == NULL)
     {
@@ -87,36 +85,41 @@ void pop(stack_t **stack, unsigned int line_number)
         exit(EXIT_FAILURE);
     }
 
+    stack_t *temp = *stack;
     *stack = (*stack)->next;
+
     if (*stack != NULL)
+    {
         (*stack)->prev = NULL;
+    }
+
+    free(temp);
 }
 
 /**
- * swap - Swaps the top two elements of the stack.
+ * f_swap - Swaps the top two elements of the stack.
  * @stack: Pointer to the top of the stack
  * @line_number: Line number in the Monty byte code file
  */
-void swap(stack_t **stack, unsigned int line_number)
+void f_swap(stack_t **stack, unsigned int line_number)
 {
-    int temp;
     if (*stack == NULL || (*stack)->next == NULL)
     {
         fprintf(stderr, "L%u: can't swap, stack too short\n", line_number);
         exit(EXIT_FAILURE);
     }
 
-    temp = (*stack)->n;
+    int temp = (*stack)->n;
     (*stack)->n = (*stack)->next->n;
     (*stack)->next->n = temp;
 }
 
 /**
- * add - Adds the top two elements of the stack.
+ * f_add - Adds the top two elements of the stack.
  * @stack: Pointer to the top of the stack
  * @line_number: Line number in the Monty byte code file
  */
-void add(stack_t **stack, unsigned int line_number)
+void f_add(stack_t **stack, unsigned int line_number)
 {
     if (*stack == NULL || (*stack)->next == NULL)
     {
@@ -125,18 +128,18 @@ void add(stack_t **stack, unsigned int line_number)
     }
 
     (*stack)->next->n += (*stack)->n;
-    pop(stack, line_number);
+    f_pop(stack, line_number);
 }
 
 /**
- * nop - Doesn't do anything, it's a no-operation.
+ * f_nop - Doesn't do anything, it's a no-operation.
  * @stack: Pointer to the top of the stack
  * @line_number: Line number in the Monty byte code file
  */
-void nop(stack_t **stack, unsigned int line_number)
+void f_nop(stack_t **stack, unsigned int line_number)
 {
-    (void)stack;
-    (void)line_number;
+    (void)stack; // Unused parameter
+    (void)line_number; // Unused parameter
     /* nop doesn't do anything, it's a no-operation */
 }
 
