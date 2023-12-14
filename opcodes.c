@@ -139,3 +139,4 @@ void nop(stack_t **stack, unsigned int line_number)
     (void)line_number;
     /* nop doesn't do anything, it's a no-operation */
 }
+
