@@ -1,7 +1,4 @@
 #include "monty.h"
-#include <stdio.h>
-#include <stdlib.h>
-
 /**
  * push - Pushes an element onto the stack.
  * @stack: Pointer to the top of the stack
